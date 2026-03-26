@@ -1,4 +1,4 @@
-# Recognition-of-Valid-Arithmetic-Expression-using-YACC
+# Recognition-of-Valid-Variable-using-YACC
 
 ## Register Number : 212223220057
 
