@@ -1,1 +1,117 @@
-# https-github.com-MoenishBaalan-Recognition-of-Valid-Arithmetic-Expression-using-YACC
+# Recognition-of-Valid-Arithmetic-Expression-using-YACC
+
+## Register Number : 212223220057
+
+## AIM   
+To write a YACC program to recognize a valid variable which starts with a letter followed by any number of letters or digits.
+
+## ALGORITHM
+1.	Start the program.
+2.	Write a program in the vi editor and save it with .l extension.
+3.	In the lex program, write the translation rules for the keywords int, float and double and for the identifier.
+4.	Write a program in the vi editor and save it with .y extension.
+5.	Compile the lex program with lex compiler to produce output file as lex.yy.c. eg $ lex filename.l
+6.	Compile the yacc program with YACC compiler to produce output file as y.tab.c. eg $ yacc –d arith_id.y
+7.	Compile these with the C compiler as gcc lex.yy.c y.tab.c
+8.	Enter a statement as input and the valid variables are identified as output.
+
+## PROGRAM
+f3.l
+```
+%{
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "ex04.tab.h"
+%}
+
+%%
+"int"                   { return INT; }
+"float"                 { return FLOAT; }
+"double"                { return DOUBLE; }
+
+[a-zA-Z_][a-zA-Z0-9_]*  {
+                            yylval.sval = strdup(yytext); 
+                            return ID;
+                        }
+
+";"                     { return SEMICOLON; }
+","                     { return COMMA; }
+[\t ]+                  ;       /* Skip spaces and tabs */
+\n                      ;       /* Ignore newlines */
+.                       { return yytext[0]; }   /* Catch-all */
+%%
+
+int yywrap(void) {
+    return 1;
+}
+
+```
+
+f3.y
+```
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int yylex(void);
+void yyerror(const char *s);
+%}
+
+/* Define union for semantic values */
+%union {
+    char *sval;
+}
+
+/* Token declarations */
+%token INT FLOAT DOUBLE
+%token <sval> ID
+%token SEMICOLON COMMA
+
+%%
+
+program:
+    declarations
+    ;
+
+declarations:
+      declaration
+    | declarations declaration
+    ;
+
+declaration:
+    type id_list SEMICOLON
+    ;
+
+type:
+      INT
+    | FLOAT
+    | DOUBLE
+    ;
+
+id_list:
+      ID                  { printf("Identifier found: %s\n", $1); free($1); }
+    | id_list COMMA ID    { printf("Identifier found: %s\n", $3); free($3); }
+    ;
+
+%%
+
+int main(void) {
+    printf("Enter a variable declaration (e.g., int a, b;):\n");
+    yyparse();
+    printf("Parsing complete.\n");
+    return 0;
+}
+
+void yyerror(const char *s) {
+    fprintf(stderr, "Parsing Error: %s\n", s);
+}
+
+```
+## OUTPUT 
+<img width="933" height="360" alt="image" src="https://github.com/user-attachments/assets/7d6642d0-1d2a-437a-af41-bb11d61ec2e7" />
+
+
+## RESULT
+A  YACC program to recognize a valid variable which starts with a letter followed by any number of letters or digits is executed successfully and the output is verified.
